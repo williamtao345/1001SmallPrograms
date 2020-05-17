@@ -28,18 +28,24 @@ void calculate(char *rooms10000, int number_of_waiters)
 
 int main()
 {
-    char rooms10000[9999] = {0};
-    int number_of_waiters = 0;
-    printf("Input the number of the waiters:\n");
-    scanf("%d", &number_of_waiters);
-    calculate(rooms10000, number_of_waiters);
-    int numbers_of_open_rooms = 0;
-    for (int i = 0; i < 10000; i++)
+    while (1)
     {
-        if (rooms10000[i] == 1)
+        char rooms10000[10000] = {0};
+        int number_of_waiters = 0;
+        printf("Input the number of the waiters:\n");
+        scanf("%d", &number_of_waiters);
+        calculate(rooms10000, number_of_waiters);
+        int numbers_of_open_rooms = 0;
+        for (int i = 0; i < 10000; i++)
         {
-            numbers_of_open_rooms++;
+            if (rooms10000[i] == 1)
+            {
+                numbers_of_open_rooms++;
+            };
         };
-    };
-    printf("The number of open rooms is %d\nOpened for %d times\nand closed for %d times!\n", numbers_of_open_rooms, open, close);
+        printf("The number of open rooms is %d\nOpened for %d times\nand closed for %d times!\n", numbers_of_open_rooms, open, close);
+        open = 0;
+        close = 0;
+        printf("---------------------------------------\n");
+    }
 }

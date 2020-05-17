@@ -3,23 +3,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ROOM_NUMBERS 10000000L
+#define ROOM_NUMBERS 100000000L
 
-long open = 0;
-long close = 0;
-
-void calculate(char *rooms10000, long number_of_waiters)
+void calculate(char *rooms, long number_of_waiters)
 {
     for (long i = 0; i < number_of_waiters; i++)
     {
         for (long j = i; j < ROOM_NUMBERS; j = j + i + 1)
         {
-            rooms10000[j] = !rooms10000[j];
+            rooms[j] = !rooms[j];
         };
     };
 };
 
-void calculate_by_tzs(char *rooms10000, long number_of_waiters)
+void calculate_by_tzs(char *rooms, long number_of_waiters)
 {
     for (long i = 0; i < number_of_waiters; i++)
     {
@@ -27,26 +24,23 @@ void calculate_by_tzs(char *rooms10000, long number_of_waiters)
         {
             if ((j + 1) % (i + 1) == 0)
             {
-                rooms10000[j] = !rooms10000[j];
+                rooms[j] =rooms[j];
             }
         };
     };
 };
 
-int find_open_rooms(char *rooms10000)
+long find_open_rooms(char *rooms)
 {
-    int numbers_of_open_rooms = 0;
+    long numbers_of_open_rooms = 0;
     for (long i = 0; i < ROOM_NUMBERS; i++)
     {
-        if (rooms10000[i] == 1)
-        {
-            numbers_of_open_rooms++;
-        };
+        numbers_of_open_rooms += rooms[i];
     };
     return numbers_of_open_rooms;
 };
 
-double calculate_time(clock_t start_of_time)
+double calculate_time_sec(clock_t start_of_time)
 {
     return (clock() - start_of_time) * 1.0 / CLOCKS_PER_SEC;
 }
@@ -59,7 +53,7 @@ void show_how_many_rooms()
 
 int main()
 {
-    char *rooms10000 = (char *)calloc(ROOM_NUMBERS, sizeof(char));
+    char *rooms = (char *)calloc(ROOM_NUMBERS, sizeof(char));
     long number_of_waiters = 0;
     char if_calculate_from_1_without_showing_details;
     show_how_many_rooms();
@@ -80,22 +74,19 @@ int main()
         };
 
         clock_t start_of_time = clock();
-        calculate(rooms10000, number_of_waiters);
-        long numbers_of_open_rooms = find_open_rooms(rooms10000);
-        double time_by_txf = calculate_time(start_of_time);
+        calculate(rooms, number_of_waiters);
+        long numbers_of_open_rooms = find_open_rooms(rooms);
+        double time_by_txf = calculate_time_sec(start_of_time);
+        memset(rooms, 0, sizeof(char) * ROOM_NUMBERS);
 
-        for (int i = 0; i < ROOM_NUMBERS; i++)
-        {
-            rooms10000[i] = 0;
-        };
         //------------------------------Calculator by tzs------------------------------
         start_of_time = clock();
-        calculate_by_tzs(rooms10000, number_of_waiters);
-        find_open_rooms(rooms10000);
-        double time_by_tzs = calculate_time(start_of_time);
+        calculate_by_tzs(rooms, number_of_waiters);
+        find_open_rooms(rooms);
+        double time_by_tzs = calculate_time_sec(start_of_time);
         //-----------------------------------------------------------------------------
 
-        memset(rooms10000, 0, sizeof(char));
+        memset(rooms, 0, sizeof(char) * ROOM_NUMBERS);
         if (if_calculate_from_1_without_showing_details == 'n')
         {
             printf("The number of open rooms is %ld\nCalculator by txf spends %12.6lf seconds\nCalculator by tzs spends %12.6lf seconds\n%8.6lf%% faster!\n",

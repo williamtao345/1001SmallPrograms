@@ -2,7 +2,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
-
+///taozhaosheng----
 #define ROOM_NUMBERS 100000000L
 
 void calculate(char *rooms, long number_of_waiters)

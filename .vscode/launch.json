@@ -1,0 +1,17 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "clang Launch",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/tao", //设置运行程序名
+            "args": [], //这个地方用于设置命令行参数
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "clang"
+        }
+    ]
+}

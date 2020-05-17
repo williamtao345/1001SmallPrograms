@@ -1,0 +1,32 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "hw.h": "c",
+        "__config": "cpp",
+        "math.h": "c",
+        "string.h": "c",
+        "__bit_reference": "c",
+        "algorithm": "c",
+        "bitset": "c",
+        "chrono": "c",
+        "unordered_map": "c",
+        "__locale": "c",
+        "istream": "c",
+        "locale": "c",
+        "memory": "c",
+        "vector": "c",
+        "atomic": "cpp",
+        "cstdlib": "cpp",
+        "ostream": "cpp",
+        "complex": "cpp",
+        "new": "cpp",
+        "utility": "cpp",
+        "cstdio": "c",
+        "limits": "cpp",
+        "ratio": "cpp",
+        "__hash_table": "c",
+        "string": "c",
+        "string_view": "c",
+        "typeinfo": "cpp"
+    }
+}

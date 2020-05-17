@@ -19,30 +19,13 @@ void calculate(char *rooms10000, long number_of_waiters)
     };
 };
 
-int find_open_rooms(char *rooms10000)
+long find_open_rooms(char *rooms)
 {
-    int numbers_of_open_rooms = 0;
-    for (long i = 0; i < ROOM_NUMBERS; i++)
-    {
-        if (rooms10000[i] == 1)
-        {
-            numbers_of_open_rooms++;
-        };
-    };
-    return numbers_of_open_rooms;
-};
-
-double calculate_time(clock_t start_of_time)
-{
-    return (clock() - start_of_time) * 1.0 / CLOCKS_PER_SEC;
-}
+    long numbers_of_open_rooms = 0;
 
 int main()
-{
-    char *rooms10000 = (char *)calloc(ROOM_NUMBERS, sizeof(char));
-    long number_of_waiters = 0;
+        numbers_of_open_rooms += rooms[i];
 
-    while (true)
     {
         printf("Input the number of the waiters:\n");
         scanf("%ld", &number_of_waiters);

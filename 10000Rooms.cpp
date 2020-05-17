@@ -1,27 +1,33 @@
 #include <stdio.h>
-int open = 0;
-int close = 0;
-void open_or_close(char *rooms10000, int number_of_room)
+#include <time.h>
+#include <stdlib.h>
+
+#define ROOM_NUMBERS 100000000L
+
+long open = 0;
+long close = 0;
+
+void calculate(char *rooms10000, long number_of_waiters)
 {
-    if (rooms10000[number_of_room] == 0)
+    for (long i = 0; i < number_of_waiters; i++)
     {
-        rooms10000[number_of_room] = 1;
-        open++;
-    }
-    else
-    {
-        rooms10000[number_of_room] = 0;
-        close++;
+        for (long j = i; j < ROOM_NUMBERS; j = j + i + 1)
+        {
+            rooms10000[j] = !rooms10000[j];
+        };
     };
 };
 
-void calculate(char *rooms10000, int number_of_waiters)
+void calculate_by_tzs(char *rooms10000, long number_of_waiters)
 {
-    for (int i = 0; i < number_of_waiters; i++)
+    for (long i = 0; i < number_of_waiters; i++)
     {
-        for (int j = i; j < 10000; j = j + i + 1)
+        for (long j = i; j < ROOM_NUMBERS; j = j + i + 1)
         {
-            open_or_close(rooms10000, j);
+            if ((j + 1) % (i + 1) == 0)
+            {
+                rooms10000[j] = !rooms10000[j];
+            }
         };
     };
 };
@@ -30,22 +36,39 @@ int main()
 {
     while (1)
     {
-        char rooms10000[10000] = {0};
-        int number_of_waiters = 0;
+        char *rooms10000 = (char *)calloc(ROOM_NUMBERS, sizeof(char));
+        long number_of_waiters = 0;
+
         printf("Input the number of the waiters:\n");
-        scanf("%d", &number_of_waiters);
+        scanf("%ld", &number_of_waiters);
+        clock_t start_of_time = clock();
         calculate(rooms10000, number_of_waiters);
-        int numbers_of_open_rooms = 0;
-        for (int i = 0; i < 10000; i++)
+        long numbers_of_open_rooms = 0;
+        for (long i = 0; i < ROOM_NUMBERS; i++)
         {
             if (rooms10000[i] == 1)
             {
                 numbers_of_open_rooms++;
             };
         };
-        printf("The number of open rooms is %d\nOpened for %d times\nand closed for %d times!\n", numbers_of_open_rooms, open, close);
-        open = 0;
-        close = 0;
+        double time_by_txf = (clock() - start_of_time) * 1.0 / CLOCKS_PER_SEC;
+        free(rooms10000);
+
+        rooms10000 = (char *)calloc(ROOM_NUMBERS, sizeof(char));
+        start_of_time = clock();
+        calculate_by_tzs(rooms10000, number_of_waiters);
+        int numbers_of_open_rooms_by_tzs = 0;
+        for (long i = 0; i < ROOM_NUMBERS; i++)
+        {
+            if (rooms10000[i] == 1)
+            {
+                numbers_of_open_rooms_by_tzs++;
+            };
+        };
+        double time_by_tzs = (clock() - start_of_time) * 1.0 / CLOCKS_PER_SEC;
+
+        printf("The number of open rooms is %ld\nCalculator by txf spends %12.6lf seconds\nCalculator by tzs spends %12.6lf seconds\n%8.6lf%% faster!\n",
+               numbers_of_open_rooms, time_by_txf, time_by_tzs, (time_by_tzs - time_by_txf) / time_by_tzs * 100);
         printf("---------------------------------------\n");
     }
 }

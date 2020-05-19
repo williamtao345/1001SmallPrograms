@@ -16,7 +16,14 @@ typedef long _DATATYPE_OF_BOTTLES_;
 
 int main()
 {
-    while (1)
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("This small program solves an interesting Math problem about change sodas from bottles.\n");
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("Introduction:\n");
+    printf("You can get a bottle of soda with 3 bottles.If you have 2 bottles you can get one by rent a bottle from someone and get a soda with 3 bottles. After drinking the soda, you will get a botlle to give it back to the person who you borrowed from. By inputing the number of bottles, this small program can calculate the max number of the sodas you can get with these bottles.\n");
+    printf("\t---- Made by William Tao----\n");
+    printf("--------------------------------------------------------------------------------------\n");
+    while (true)
     {
         _DATATYPE_OF_BOTTLES_ number_of_bottles = 0;
         _DATATYPE_OF_BOTTLES_ number_of_sodas = 0;

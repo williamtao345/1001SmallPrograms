@@ -34,11 +34,19 @@ double calculate_time_sec(clock_t start_of_time)
 void show_how_many_rooms()
 {
     long room_numbers = ROOM_NUMBERS;
-    printf("%ld rooms in the hotel.\n", room_numbers);
+    printf("There are %ld rooms in the hotel.\n", room_numbers);
 }
 
 int main()
 {
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("This small program solves an interesting Math problem about opening and closing rooms.\n");
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("Introduction:\n");
+    printf("There are 10,000 rooms in the hotel, numbered from 1 to 10, 000. The first waiter opened all the doors of the rooms, the second waiter \" reversed \" all the rooms numbered multiple of 2, and the third waiter \" reversed \" all the rooms numbered multiple of 3... (1<-n<-10000) the waiters \" reversed \" all rooms numbered multiple of n.\n");
+    printf("--------------------------------------------------------------------------------------\n");
+    printf("\t---- Made by William Tao----\n");
+    printf("--------------------------------------------------------------------------------------\n");
     char *rooms = (char *)calloc(ROOM_NUMBERS, sizeof(char));
     long number_of_waiters = 0;
     show_how_many_rooms();

@@ -1,146 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
-#define SIZE_OF_INPUT 100
+#define MAX_WORD_SIZE 20
+#define MAX_TXTNAME_SIZE 30
+#define PATH_LENGTH 256
+#define EXIT_IF_NULL(varibleName) \
+    if (varibleName == 0)         \
+        exit(0);
 
-struct node;
 struct WordNode
 {
     char word[20];
     int frequency;
-    struct WordNode *next_word_link;
+    struct WordNode *nextWordLink;
 };
 typedef struct node
 {
-    struct WordNode *first_word_link, *last_word_link;
+    struct WordNode *firstWordLink, *lastWordLink;
 } * WordTree;
 
-WordTree init_word_tree()
-{
-    WordTree word_tree = (WordTree)calloc(1, sizeof(WordTree));
-    WordNode *word_node = (WordNode *)calloc(1, sizeof(WordNode));
-    word_tree->first_word_link = word_node;
-    word_tree->last_word_link = word_node;
-    return word_tree;
-};
-
-WordNode *add_word_node(WordTree word_tree, char *word)
-{
-    WordNode *word_node = (WordNode *)calloc(1, sizeof(WordNode));
-    strcpy(word_node->word, word);
-    word_node->frequency = 1;
-    word_tree->last_word_link->next_word_link = word_node;
-    word_tree->last_word_link = word_node;
-    return word_node;
-};
-
-WordNode *find_word_in_word_tree(WordTree word_tree, char *word)
-{
-    WordNode *p = word_tree->first_word_link;
-    do
-    {
-        if (!strcmp(p->word, word))
-        {
-            return p;
-        };
-        p = p->next_word_link;
-    } while (p != 0);
-    return 0;
-};
-
-int form_word_tree(WordTree word_tree, char *&input_string, char *delim)
-{
-    char sep = '\n';
-    input_string = strtok(input_string, &sep);
-    strcpy(word_tree->first_word_link->word, strtok(input_string, delim));
-    if (*word_tree->first_word_link->word == 0)
-    {
-        exit(0);
-    }
-    else
-    {
-        word_tree->first_word_link->frequency = 1;
-    };
-
-    int number_of_word_nodes = 1;
-    WordNode *p_WordNode;
-    char *p_strtok;
-    while ((p_strtok = strtok(NULL, delim)))
-    {
-        p_WordNode = find_word_in_word_tree(word_tree, p_strtok);
-        if (p_WordNode == 0)
-        {
-            add_word_node(word_tree, p_strtok);
-            number_of_word_nodes++;
-        }
-        else
-        {
-            p_WordNode->frequency++;
-        };
-    };
-    return number_of_word_nodes;
-};
-
-//After changing, node->next_word_link becomes to word_node->next_word_link->next_word_link's next_word_link!
-void switch_word_nodes(WordNode *word_node)
-{
-    WordNode *p = word_node->next_word_link;
-    word_node->next_word_link = word_node->next_word_link->next_word_link;
-    p->next_word_link = word_node->next_word_link->next_word_link;
-    word_node->next_word_link->next_word_link = p;
-};
-
-void sort_word_tree(WordTree &word_tree, int number_of_word_nodes)
-{
-    WordNode *word_node = word_tree->first_word_link;
-    if (number_of_word_nodes == 2)
-    {
-        if (word_node->frequency < word_node->next_word_link->frequency)
-        {
-            word_tree->first_word_link = word_node->next_word_link;
-            WordNode *p = word_node->next_word_link->next_word_link;
-            word_tree->first_word_link->next_word_link = word_node;
-            word_node->next_word_link = p;
-        };
-    }
-    if (number_of_word_nodes > 2)
-    {
-        for (int i = 0; i < number_of_word_nodes; i++)
-        {
-            if (word_node->frequency < word_node->next_word_link->frequency)
-            {
-                word_tree->first_word_link = word_node->next_word_link;
-                WordNode *p = word_node->next_word_link->next_word_link;
-                word_tree->first_word_link->next_word_link = word_node;
-                word_node->next_word_link = p;
-            };
-            while (word_node->next_word_link->next_word_link != 0)
-            {
-                if (word_node->next_word_link->frequency < word_node->next_word_link->next_word_link->frequency)
-                {
-                    switch_word_nodes(word_node);
-                };
-                word_node = word_node->next_word_link;
-            };
-            word_node = word_tree->first_word_link;
-        };
-    };
-};
-
-void print_word_tree(WordTree word_tree, int number_of_word_nodes)
-{
-    WordNode *word_node = word_tree->first_word_link;
-    printf("---------------------------------\n");
-    for (int i = 0; i < number_of_word_nodes; i++)
-    {
-        printf("%s\t%d\n", word_node->word, word_node->frequency);
-        printf("-----------------\n");
-        word_node = word_node->next_word_link;
-    };
-};
-
-int main()
+void PrintInfo()
 {
     printf("------------------------------------------------------------------------------------------\n");
     printf("This small program calculates times every word appears in one paragraph(Word frequencies).\n");
@@ -150,24 +31,214 @@ int main()
     printf("------------------------------------------------------------------------------------------\n");
     printf("\t---- Made by William Tao----\n");
     printf("------------------------------------------------------------------------------------------\n");
+}
+
+char *CatNameToLink(char *fileCWD, char *txtName)
+{
+    strcat(fileCWD, "/");
+    strcat(fileCWD, txtName);
+    return fileCWD;
+};
+
+char *GetFileCWD()
+{
+    char *fileCWD;
+    fileCWD = (char *)calloc(PATH_LENGTH, sizeof(char));
+    getcwd(fileCWD, PATH_LENGTH);
+    return fileCWD;
+};
+
+char *GetTxtCWD(char *txtName)
+{
+    return CatNameToLink(GetFileCWD(), txtName);
+}
+
+FILE *OpenFile(char *txtCWD)
+{
+    FILE *file = fopen(txtCWD, "r");
+    EXIT_IF_NULL(file)
+    return file;
+};
+
+WordTree InitWordTree()
+{
+    WordTree wordTree = (WordTree)calloc(1, sizeof(WordTree));
+    WordNode *wordNode = (WordNode *)calloc(1, sizeof(WordNode));
+    wordTree->firstWordLink = wordNode;
+    wordTree->lastWordLink = wordNode;
+    return wordTree;
+};
+
+char *GetWordFromFile(FILE *file)
+{
+    char *word = (char *)calloc(MAX_WORD_SIZE, sizeof(char));
+    fscanf(file, "%s", word);
+    return word;
+}
+
+char *WordLink(WordNode *wordNode)
+{
+    return wordNode->word;
+}
+
+WordNode *NextWordLink(WordNode *wordNode)
+{
+    return wordNode->nextWordLink;
+}
+
+int WordFrequency(WordNode *wordNode)
+{
+    return wordNode->frequency;
+}
+
+WordNode *AddEmptyWordNode(WordTree wordTree, char *word)
+{
+    WordNode *wordNode = (WordNode *)calloc(1, sizeof(WordNode));
+    strcpy(wordNode->word, word);
+    wordNode->frequency = 1;
+    wordTree->lastWordLink->nextWordLink = wordNode;
+    wordTree->lastWordLink = wordNode;
+    return wordNode;
+};
+
+WordNode *FindWordInWordTree(WordTree wordTree, char *word)
+{
+    WordNode *p = wordTree->firstWordLink;
+    do
+    {
+        if (!strcmp(p->word, word))
+        {
+            return p;
+        };
+        p = p->nextWordLink;
+    } while (p != 0);
+    return 0;
+};
+
+int AddWordNodeToWordTree(WordTree wordTree, char *word)
+{
+    WordNode *wordNodeLink;
+    wordNodeLink = FindWordInWordTree(wordTree, word);
+    if (wordNodeLink == 0)
+    {
+        AddEmptyWordNode(wordTree, word);
+        return 1;
+    }
+    else
+    {
+        wordNodeLink->frequency++;
+        return 0;
+    };
+}
+
+int FormWordTree(WordTree wordTree, FILE *file)
+{
+    strcpy(WordLink(wordTree->firstWordLink), GetWordFromFile(file));
+    EXIT_IF_NULL(*WordLink(wordTree->firstWordLink))
+    wordTree->firstWordLink->frequency = 1;
+
+    int numberOfWordNodes = 1;
+    char *word = 0;
     while (true)
     {
-        char *input_string;
-        char delim = ' ';
-        input_string = (char *)calloc(SIZE_OF_INPUT, sizeof(char));
-        printf("Input words (Input 0 to exit): ");
-        fflush(stdout);
-        fgets(input_string, SIZE_OF_INPUT, stdin);
-
-        //--------Form word tree--------
-        WordTree word_tree = init_word_tree();
-        int number_of_word_nodes = form_word_tree(word_tree, input_string, &delim);
-
-        //--------Sort word tree--------
-        sort_word_tree(word_tree, number_of_word_nodes);
-
-        //--------Print word tree--------
-        print_word_tree(word_tree, number_of_word_nodes);
-        free(word_tree);
+        word = GetWordFromFile(file);
+        if (*word == 0)
+        {
+            break;
+        }
+        numberOfWordNodes += AddWordNodeToWordTree(wordTree, word);
     };
+    return numberOfWordNodes;
+};
+
+//After changing, node->nextWordLink becomes to wordNode->nextWordLink->nextWordLink's nextWordLink!
+void SwitchWordNodes(WordNode *wordNode)
+{
+    WordNode *p = wordNode->nextWordLink;
+    wordNode->nextWordLink = NextWordLink(NextWordLink(wordNode));
+    p->nextWordLink = NextWordLink(wordNode);
+    NextWordLink(wordNode)->nextWordLink = p;
+};
+
+void SwitchFirststSecondWordNodes(WordTree wordTree)
+{
+    WordNode *wordNode = wordTree->firstWordLink;
+    wordTree->firstWordLink = wordNode->nextWordLink;
+    WordNode *p = wordNode->nextWordLink->nextWordLink;
+    wordTree->firstWordLink->nextWordLink = wordNode;
+    wordNode->nextWordLink = p;
+}
+
+void SortWordTree(WordTree &wordTree, int numberOfWordNodes)
+{
+    if (numberOfWordNodes == 2)
+    {
+        if (WordFrequency(wordTree->firstWordLink) < WordFrequency(NextWordLink(wordTree->firstWordLink)))
+            SwitchFirststSecondWordNodes(wordTree);
+    }
+
+    if (numberOfWordNodes > 2)
+    {
+        WordNode *wordNode = wordTree->firstWordLink;
+        for (int i = 0; i < numberOfWordNodes; i++)
+        {
+            if (WordFrequency(wordTree->firstWordLink) < WordFrequency(NextWordLink(wordTree->firstWordLink)))
+            {
+                SwitchFirststSecondWordNodes(wordTree);
+            };
+            while (NextWordLink(wordNode->nextWordLink) != 0)
+            {
+                if (WordFrequency(wordNode->nextWordLink) < WordFrequency(NextWordLink(wordNode->nextWordLink)))
+                {
+                    SwitchWordNodes(wordNode);
+                };
+                wordNode = wordNode->nextWordLink;
+            };
+            wordNode = wordTree->firstWordLink;
+        };
+    };
+};
+
+void PrintWordTree(WordTree wordTree, int numberOfWordNodes)
+{
+    WordNode *wordNode = wordTree->firstWordLink;
+    printf("---------------------------------\n");
+    for (int i = 0; i < numberOfWordNodes; i++)
+    {
+        printf("%s\t%d\n", wordNode->word, wordNode->frequency);
+        printf("-----------------\n");
+        wordNode = wordNode->nextWordLink;
+    };
+};
+
+int FreeWordTree(WordNode *wordNode)
+{
+    if(wordNode->nextWordLink == 0)
+    {
+        free(wordNode);
+        return 0;
+    }
+    if(FreeWordTree(wordNode->nextWordLink) == 0)
+    {
+        free(wordNode);
+        return 0;
+    }
+    return 1;
+}
+
+int main()
+{
+    PrintInfo();
+    char txtName[] = "Paragraph.txt";
+    FILE *file = OpenFile(GetTxtCWD(txtName));
+    //--------Form word tree--------
+    WordTree wordTree = InitWordTree();
+    int numberOfWordNodes = FormWordTree(wordTree, file);
+
+    //--------Sort word tree--------
+    SortWordTree(wordTree, numberOfWordNodes);
+
+    //--------Print word tree--------
+    PrintWordTree(wordTree, numberOfWordNodes);
+    FreeWordTree(wordTree->firstWordLink);
 };

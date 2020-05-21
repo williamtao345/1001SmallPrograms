@@ -229,7 +229,7 @@ int FreeWordTree(WordNode *wordNode)
 int main()
 {
     PrintInfo();
-    char txtName[] = "Paragraph.txt";
+    char txtName[] = "Word-Frequency-Input.txt"; //Your name of txt file in the folder.
     FILE *file = OpenFile(GetTxtCWD(txtName));
     //--------Form word tree--------
     WordTree wordTree = InitWordTree();

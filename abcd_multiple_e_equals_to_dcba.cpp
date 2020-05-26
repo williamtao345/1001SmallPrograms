@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-int Power(int base, int index)
+/* int Power(int base, int index)
 {
     int number = 1;
     if (base < 0 || index < 0)
@@ -13,18 +13,18 @@ int Power(int base, int index)
         number = number * base;
     }
     return number;
-}
+} */
 
-void TransferToDigits(int *digits, int number)
+/* void TransferToDigits(int *digits, int number)
 {
     for (int i = 0; i < 4; i++)
     {
         digits[i] = number / Power(10, 3 - i);
         number -= digits[i] * Power(10, 3 - i);
     };
-}
+} */
 
-void ReverseDigits(int *digits)
+/* void ReverseDigits(int *digits)
 {
     for (int i = 0; i < 2; i++)
     {
@@ -32,9 +32,9 @@ void ReverseDigits(int *digits)
         digits[i] = digits[3 - i];
         digits[3 - i] = digit;
     };
-};
+}; */
 
-int TransferToNumber(int *digits)
+/* int TransferToNumber(int *digits)
 {
     int number = 0;
     for (int i = 0; i < 4; i++)
@@ -42,14 +42,22 @@ int TransferToNumber(int *digits)
         number += digits[i] * Power(10, 3 - i);
     };
     return number;
-};
+}; */
 
 int ReverseNumber(int number)
 {
-    int digits[4];
+    /* int digits[4];
     TransferToDigits(digits, number);
     ReverseDigits(digits);
-    return TransferToNumber(digits);
+    return TransferToNumber(digits); */
+    int sum = 0;
+    while (number)
+    {
+        sum = sum * 10 + number % 10;
+
+        number /= 10;
+    }
+    return sum;
 }
 
 int main()

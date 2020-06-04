@@ -78,7 +78,6 @@ int main()
 
 #define NUMBER_LENGTH 14
 #define ANSWER_LENGTH 4
-
 //return place of next number;
 int maxNumber = 9;
 int FindNextNumber(char *n, int len)
@@ -87,7 +86,7 @@ int FindNextNumber(char *n, int len)
     {
         for (int j = 0; j < len; j++)
         {
-            if (n[j] == (i + 48))
+            if (n[j] == (i + '0'))
             {
                 return j;
             }
@@ -124,19 +123,19 @@ void DeletePreviousDigits(char *n, int numberPlace)
     };
 }
 
-int main()
+void FindMaxNum1(char *n)
 {
-    char n[] = "20813467185319";
-    char answer[ANSWER_LENGTH];
+    char answer[5];
     memset(answer, 0, ANSWER_LENGTH);
     int answerLen = 0;
     int len = NUMBER_LENGTH;
-    while (true)
+
+    while (1)
     {
         int nextNumberPlace = FindNextNumber(n, len);
         if (len - nextNumberPlace < ANSWER_LENGTH - answerLen)
         {
-            maxNumber = n[nextNumberPlace] - 49;
+            maxNumber = n[nextNumberPlace] - '0' - 1;
             continue;
         }
         else if (len - nextNumberPlace == ANSWER_LENGTH - answerLen)
@@ -162,4 +161,59 @@ int main()
         }
     };
     printf("%s\n", answer);
+}
+
+void Char2Int(const char *input, char *n)
+{
+    int x = 0;
+    while (input[x] != '\0')
+    {
+        n[x] = input[x] - 48;
+        x++;
+    };
+}
+
+char FindMaxNum(char *n, char start, char end)
+{
+    for (int i = 9; i >= 0; i--)
+    {
+        for (int j = start; j < end + 1; j++)
+        {
+            if (n[j] == i)
+            {
+                return j;
+            }
+        }
+    }
+    return 0;
+}
+
+void FindMaxNum2(char *n)
+{
+    char input[] = {0};
+    Char2Int(n, input);
+
+    char result[4] = {0};
+
+    char seed = -1;
+
+    for (int i = 0; i < 4; i++)
+    {
+        seed = FindMaxNum(input, seed + 1, 10 + i);
+        result[i] = input[seed];
+    }
+
+    for (int i = 0; i < 4;i++)
+    {
+        printf("%d", result[i]);
+    };
+    printf("\n");
+}
+
+int main()
+{
+    char x[] = "20813467185319";
+    FindMaxNum1(x);
+    char y[] = "20813467185319";
+    FindMaxNum2(y);
 }

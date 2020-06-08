@@ -112,7 +112,7 @@ void *PrintProcess(void *arg)
 }
 #endif
 
-int forFunction(int *nString, int nStringLength, int *numbersOfEachGroupsNumbers, int groupNumber, int digit, int totalSum)
+int ForFunction(int *nString, int nStringLength, int *numbersOfEachGroupsNumbers, int groupNumber, int digit, int totalSum)
 {
     if (digit == 1)
     {
@@ -142,7 +142,7 @@ int forFunction(int *nString, int nStringLength, int *numbersOfEachGroupsNumbers
                 break;
             }
             numbersOfEachGroupsNumbers[groupNumber - digit] = i;
-            forFunction(nString, nStringLength, numbersOfEachGroupsNumbers, groupNumber, digit - 1, totalSum + i);
+            ForFunction(nString, nStringLength, numbersOfEachGroupsNumbers, groupNumber, digit - 1, totalSum + i);
             i++;
         };
     };
@@ -150,7 +150,7 @@ int forFunction(int *nString, int nStringLength, int *numbersOfEachGroupsNumbers
     return 1;
 }
 
-int forFunctionFirstTime(int *nString, int nStringLength, int *numbersOfEachGroupsNumbers, int groupNumber, int digit, int totalSum)
+int ForFunctionFirstTime(int *nString, int nStringLength, int *numbersOfEachGroupsNumbers, int groupNumber, int digit, int totalSum)
 {
     if (digit == 1)
     {
@@ -166,7 +166,7 @@ int forFunctionFirstTime(int *nString, int nStringLength, int *numbersOfEachGrou
     else
     {
         numbersOfEachGroupsNumbers[groupNumber - digit] = 1;
-        forFunction(nString, nStringLength, numbersOfEachGroupsNumbers, groupNumber, digit - 1, totalSum + 1);
+        ForFunction(nString, nStringLength, numbersOfEachGroupsNumbers, groupNumber, digit - 1, totalSum + 1);
     };
     return 1;
 }
@@ -174,8 +174,8 @@ int forFunctionFirstTime(int *nString, int nStringLength, int *numbersOfEachGrou
 void FormLeastWasteSpace(int *nString, int nStringLength, int groupNumber, TYPE_OF_TOTAL_SUM stringSum)
 {
     int *numbersOfEachGroupsNumbers = (int *)calloc(groupNumber, sizeof(int));
-    forFunctionFirstTime(nString, nStringLength, numbersOfEachGroupsNumbers, groupNumber, groupNumber, 0);
-    forFunction(nString, nStringLength, numbersOfEachGroupsNumbers, groupNumber, groupNumber, 0);
+    ForFunctionFirstTime(nString, nStringLength, numbersOfEachGroupsNumbers, groupNumber, groupNumber, 0);
+    ForFunction(nString, nStringLength, numbersOfEachGroupsNumbers, groupNumber, groupNumber, 0);
 }
 
 int main()

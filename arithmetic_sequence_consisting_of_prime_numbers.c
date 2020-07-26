@@ -220,7 +220,6 @@ int FindLongestArithmeticSequence(TYPE_OF_NUMBER_RANGE *longestArithmeticSequenc
         }
     };
     printASNumbers(ASNum);
-    free(ASNum);
     return ASLen;
 };
 

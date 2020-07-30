@@ -51,4 +51,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# My own files
 tao
+draft.cpp
+input_for_draft.txt

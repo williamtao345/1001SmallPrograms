@@ -8,7 +8,7 @@ typedef int TypeOfEncrypt;
 #define DECRYPT_FILE_NAME "draft2.cpp"
 #define CLEAN_SCREEN printf("\x1b[H\x1b[2J")
 // #define WINDOWS
-#define TEST
+// #define TEST
 
 #ifdef TEST
 #define PASSWORD 123

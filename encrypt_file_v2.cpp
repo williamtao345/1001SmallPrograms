@@ -151,7 +151,8 @@ Password GetPassword()
 
 /* void WriteMd5(char *password, int length, FILE *fp)
 {
-    char *md5 = getMd5((unsigned char *)password);
+    unsigned char *p = (unsigned char *)password;
+    char *md5 = getMd5(p);
     fwrite(md5, sizeof(char), strlen(md5), fp);
     free(md5);
 } */

@@ -16,7 +16,7 @@ int CountZeroInInt(int number)
 int CountOneInInt(int number)
 {
     int count = 0;
-    while(number != 0)
+    while (number != 0)
     {
         number = number & (number - 1);
         count++;
@@ -26,12 +26,12 @@ int CountOneInInt(int number)
 
 int Add(int x, int y)
 {
-    int _and;
+    int tmp;
     do
     {
-        _and = x & y;
-        x = (x | y) ^ _and; //x = x ^ y;
-        y = _and << 1;      //y = (x & y) << 1;
+        tmp = x;
+        x = x ^ y;
+        y = (tmp & y) << 1;
     } while (y != 0);
 
     return x;
@@ -43,4 +43,5 @@ int main()
     int y = 220;
     printf("%d\n", CountOneInInt(999));
     printf("%d\n", CountZeroInInt(999));
+    printf("%d\n", Add(x, y));
 }

@@ -29,6 +29,7 @@
         "string_view": "c",
         "typeinfo": "cpp",
         "__functional_03": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "ios": "cpp"
     }
 }

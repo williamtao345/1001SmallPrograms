@@ -4,11 +4,11 @@
 #include <unistd.h>
 #include <term.h>
 
-int Search1(int *list, int length, int value)
+/* int Search1(int *list, int length, int value)
 {
     int *tmpList = (int *)calloc(length + 1, sizeof(int));
     return 0;
-}
+} */
 
 int Search2(int *list, int length, int value, int &p)
 {
@@ -156,6 +156,55 @@ int BitDelete(BSTree &BT, int value)
     return 1;
 }
 
+int BitDelete2(BSTree &BT, int value)
+{
+    BSNode *deleteNode, *fatherDelete = NULL, *p = BT;
+    if ((deleteNode = BitSearth(p, value, fatherDelete)) == NULL)
+        return 0;
+    if (deleteNode->leftNode != NULL)
+    {
+        BSNode *nF = deleteNode, *n = deleteNode->leftNode;
+        while (n->rightNode != NULL)
+        {
+            nF = n;
+            n = n->rightNode;
+        }
+        deleteNode->value = n->value;
+        deleteNode = n;
+        fatherDelete = nF;
+    }
+    BSNode **f;
+    (deleteNode->value < fatherDelete->value) ? f = &fatherDelete->leftNode : f = &fatherDelete->rightNode;
+
+    if (deleteNode->leftNode)
+        *f = deleteNode->leftNode;
+    else
+        *f = deleteNode->rightNode;
+    free(deleteNode);
+    return 1;
+    /* if (deleteNode->leftNode == NULL)
+    {
+        if (deleteNode->value < fatherDelete->value)
+            fatherDelete->leftNode = deleteNode->rightNode;
+        else
+            fatherDelete->rightNode = deleteNode->rightNode;
+        free(deleteNode);
+        return 1;
+    }
+    else
+    {
+        BSNode *nF = deleteNode, *n = deleteNode->leftNode;
+        while (n->rightNode != NULL)
+        {
+            nF = n;
+            n = n->rightNode;
+        }
+
+        deleteNode->value = n->value;
+        if()
+    } */
+}
+
 typedef struct AVLNode_
 {
     int value;
@@ -168,11 +217,20 @@ int GetAVLHeight(AVLTree tree)
     if (tree == NULL)
         return 0;
     if (tree->leftNode == NULL && tree->rightNode == NULL)
+    {
+        tree->height = 1;
         return 1;
+    }
     else if (GetAVLHeight(tree->leftNode) > GetAVLHeight(tree->rightNode))
-        return tree->leftNode->height + 1;
+    {
+        tree->height = tree->leftNode->height + 1;
+        return tree->height;
+    }
     else
-        return tree->rightNode->height + 1;
+    {
+        tree->height = tree->rightNode->height + 1;
+        return tree->height;
+    }
 }
 
 void AVLRightRotation(AVLTree &tree)
@@ -200,7 +258,23 @@ void AVLLeftRotation(AVLTree &tree)
     else if(GetLowestAVLNode(tree->leftNode, node) > GetLowestAVLNode(tree->leftNode, node))
         return 
 } */
-AVLNode *AVLRebalance(AVLTree &tree, int key)
+
+int AVLGetBalanceFactor(AVLTree tree)
+{
+    if (tree == NULL || (tree->leftNode == NULL && tree->rightNode == 0))
+        return 0;
+    else
+    {
+        if (tree->leftNode != NULL && tree->rightNode != NULL)
+            return tree->leftNode->height - tree->rightNode->height;
+        else if (tree->leftNode)
+            return tree->leftNode->height;
+        else
+            return -tree->rightNode->height;
+    }
+}
+
+/* AVLNode *AVLRebalance(AVLTree &tree, int key)
 {
     int balanceFactor = GetAVLHeight(tree);
     if (balanceFactor > 1 && key < tree->leftNode->value)
@@ -217,6 +291,31 @@ AVLNode *AVLRebalance(AVLTree &tree, int key)
         AVLRightRotation(tree);
     }
     else if (balanceFactor < -1 && key < tree->rightNode->value)
+    {
+        AVLRightRotation(tree->rightNode);
+        AVLLeftRotation(tree);
+    }
+    return tree;
+} */
+
+AVLNode *AVLRebalance(AVLTree &tree)
+{
+    GetAVLHeight(tree);
+    int factor = AVLGetBalanceFactor(tree);
+    if (factor > 1 && AVLGetBalanceFactor(tree->leftNode) > 0)
+    {
+        AVLRightRotation(tree);
+    }
+    else if (factor < -1 && AVLGetBalanceFactor(tree->rightNode) <= 0)
+    {
+        AVLLeftRotation(tree);
+    }
+    else if (factor > 1 && AVLGetBalanceFactor(tree->leftNode) <= 0)
+    {
+        AVLLeftRotation(tree->leftNode);
+        AVLRightRotation(tree);
+    }
+    else if ((factor < -1 && AVLGetBalanceFactor(tree->rightNode) > 0))
     {
         AVLRightRotation(tree->rightNode);
         AVLLeftRotation(tree);
@@ -256,7 +355,103 @@ AVLTree AddAVLNode(AVLTree tree, int value)
     return p;
 }
 
+int Max(int x, int y)
+{
+    if (x > y)
+        return x;
+    else
+        return y;
+}
+
+AVLNode *AVLSearch(AVLTree tree, int value, AVLNode *&father)
+{
+    AVLTree p = tree;
+    father = NULL;
+    while (p != NULL)
+    {
+        if (p->value == value)
+        {
+            return p;
+        }
+        father = p;
+        (value < p->value) ? p = p->leftNode : p = p->rightNode;
+    }
+    return p;
+}
+
+AVLTree AVLInsertNode(AVLTree &tree, int value)
+{
+    if (tree == NULL)
+    {
+        AVLTree p = (AVLTree)calloc(1, sizeof(AVLNode));
+        p->value = value;
+        p->leftNode = NULL;
+        p->rightNode = NULL;
+        tree = p;
+    }
+    else if (value < tree->value)
+        AVLInsertNode(tree->leftNode, value);
+    else if (value > tree->value)
+        AVLInsertNode(tree->rightNode, value);
+    else
+        return tree;
+
+    if (tree->leftNode != NULL && tree->rightNode != NULL)
+        tree->height = 1 + Max(tree->leftNode->height, tree->rightNode->height);
+    else if (tree->leftNode == NULL && tree->rightNode == NULL)
+        tree->height = 1;
+    else if (tree->rightNode == NULL)
+        tree->height = 1 + tree->leftNode->height;
+    else
+        tree->height = 1 + tree->rightNode->height;
+
+    return AVLRebalance(tree);
+}
+
+int AVLDeleteNode(AVLTree &tree, int value)
+{
+    AVLNode *deleteNode, *fatherDelete = NULL, *p = tree;
+    if ((deleteNode = AVLSearch(p, value, fatherDelete)) == NULL)
+        return 0;
+    if (deleteNode->leftNode != NULL && deleteNode->rightNode != NULL)
+    {
+        AVLNode *nF = deleteNode, *n = deleteNode->leftNode;
+        while (n->rightNode != NULL)
+        {
+            nF = n;
+            n = n->rightNode;
+        }
+        deleteNode->value = n->value;
+        fatherDelete = nF;
+        deleteNode = n;
+    }
+    AVLNode **f;
+    if (deleteNode == tree)
+        f = &tree;
+    else
+        (fatherDelete->leftNode == deleteNode) ? f = &fatherDelete->leftNode : f = &fatherDelete->rightNode;
+
+    if (deleteNode->leftNode)
+        *f = deleteNode->leftNode;
+    else
+        *f = deleteNode->rightNode;
+    free(deleteNode);
+    AVLRebalance(tree);
+    return 1;
+};
+
+AVLTree AVLBuildTree(int *numbers, int length)
+{
+    AVLTree tree = NULL;
+    for (int i = 0; i < length; i++)
+        AVLInsertNode(tree, numbers[i]);
+    return tree;
+}
+
 int main()
 {
+    int numbers[10] = {3, 2, 6, 5, 4, 7};
+    AVLTree tree = AVLBuildTree(numbers, 6);
+    AVLDeleteNode(tree, 3);
     printf("Hello World!\n");
 }

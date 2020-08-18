@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "md5.h"
 
 typedef char TypeOfEncrypt;
 #define SOURCE_FILE_NAME "draft.cpp"

@@ -30,6 +30,7 @@
         "typeinfo": "cpp",
         "__functional_03": "cpp",
         "functional": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "__node_handle": "cpp"
     }
 }

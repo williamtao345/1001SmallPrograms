@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-// #define TEST
+#define TEST
 int BTree_m = 5;
 typedef unsigned int BTreeKeyType;
 typedef struct BTree_
@@ -16,8 +16,12 @@ int InitBTNode(BTree &T)
 {
     if (T == NULL)
         T = (BTree)calloc(1, sizeof(BTNode));
-    free(T->key);
-    free(T->ptr);
+    else
+    {
+        free(T->key);
+        free(T->ptr);
+    }
+
     T->n = 0;
     T->key = (BTreeKeyType *)calloc(BTree_m + 1, sizeof(BTreeKeyType));
     T->ptr = (BTree_ **)calloc(BTree_m + 2, sizeof(BTree_));
@@ -34,45 +38,6 @@ struct BTreeSearch_r
     int i, tag;
 };
 
-#ifdef TEST
-
-void PrintKeyArray(unsigned int *numbers, int length)
-{
-    printf(" ");
-    for (int i = 0; i < length; i++)
-    {
-        printf("%d ", numbers[i]);
-    }
-    printf("\n");
-}
-
-void PrintPtrArray(BTNode **ptr, int length)
-{
-    for (int i = 0; i < length; i++)
-    {
-        if (ptr[i] == NULL)
-            printf("0 ");
-        else
-            printf("1 ");
-    }
-    printf("\n");
-}
-
-int PrintBTNode(BTNode *t)
-{
-    if (t == NULL)
-    {
-        printf("----NULL----\n");
-        return 0;
-    }
-    printf("key: ");
-    PrintKeyArray(t->key, BTree_m + 1);
-    printf("ptr: ");
-    PrintPtrArray(t->ptr, BTree_m + 2);
-    return 1;
-}
-#endif
-
 BTreeSearch_r BTSearch_a(BTree T, BTreeKeyType x)
 {
     int i = 0;
@@ -81,9 +46,6 @@ BTreeSearch_r BTSearch_a(BTree T, BTreeKeyType x)
     BTNode *p = T, *q = NULL;
     while (p != NULL)
     {
-        for (i = 0; x > p->key[i] && i < p->n; i++)
-            printf("%d ", p->key[i]);
-        printf("\n");
         if (p->key[i] == x)
         {
             rst.r = p;
@@ -91,10 +53,6 @@ BTreeSearch_r BTSearch_a(BTree T, BTreeKeyType x)
             rst.tag = 1;
             return rst;
         }
-#ifdef TEST
-        printf("-------------------\n");
-        PrintBTNode(p);
-#endif
         q = p;
         p = p->ptr[i];
     }
@@ -125,10 +83,6 @@ int RebalanceBTNode(BTNode *&T, BTNode *f)
     left->key[BTree_m / 2 + 1] = NULL;
     left->n--;
 
-#ifdef TEST
-    PrintKeyArray(left->key, BTree_m + 1);
-#endif
-
     BTNode *right = NULL;
     InitBTNode(right);
     int q;
@@ -140,17 +94,6 @@ int RebalanceBTNode(BTNode *&T, BTNode *f)
         left->ptr[q + BTree_m / 2 + 2] = NULL;
         left->n--;
         right->n++;
-
-#ifdef TEST_
-        printf("L->key: ");
-        PrintKeyArray(left->key, BTree_m + 1);
-        printf("L->ptr: ");
-        PrintPtrArray(left->ptr, BTree_m + 2);
-        printf("R->key: ");
-        PrintKeyArray(right->key, BTree_m + 1);
-        printf("R->ptr: ");
-        PrintPtrArray(right->ptr, BTree_m + 2);
-#endif
     }
     right->ptr[q] = left->ptr[q + BTree_m / 2 + 2];
     left->ptr[q + BTree_m / 2 + 2] = NULL;
@@ -158,29 +101,10 @@ int RebalanceBTNode(BTNode *&T, BTNode *f)
     left->ptr[left->n + 1] = f;
     right->ptr[right->n + 1] = f;
 
-#ifdef TEST
-    printf("L->key: ");
-    PrintKeyArray(left->key, BTree_m + 1);
-    printf("L->ptr: ");
-    PrintPtrArray(left->ptr, BTree_m + 2);
-    printf("R->key: ");
-    PrintKeyArray(right->key, BTree_m + 1);
-    printf("R->ptr: ");
-    PrintPtrArray(right->ptr, BTree_m + 2);
-    printf("\n");
-#endif
-
     //Creat father node;
     int i;
     BTNode *fatherF = f->ptr[f->n + 1];
-#ifdef TEST
-    printf("---------Before Insert father node---------\n");
-    printf("f->key: ");
-    PrintKeyArray(f->key, BTree_m + 1);
-    printf("f->ptr: ");
-    PrintPtrArray(f->ptr, BTree_m + 2);
-    printf("--------------------------------------------\n");
-#endif
+
     for (i = 0; middle > f->key[i] && i < f->n; i++)
         ;
 
@@ -193,20 +117,6 @@ int RebalanceBTNode(BTNode *&T, BTNode *f)
     f->ptr[i] = left;
     f->ptr[i + 1] = right;
     f->n++;
-
-#ifdef TEST
-    printf("f->key: ");
-    PrintKeyArray(f->key, BTree_m + 1);
-    printf("f->ptr: ");
-    PrintPtrArray(f->ptr, BTree_m + 2);
-    printf("================\n");
-    printf("L->f: \n");
-    PrintBTNode(left->ptr[left->n + 1]);
-    printf("================\n");
-    printf("R->f: \n");
-    PrintBTNode(right->ptr[right->n + 1]);
-    printf("\n");
-#endif
 
     RebalanceBTNode(f, fatherF);
     return ifRoot;
@@ -230,28 +140,14 @@ int BTInsert(BTree &T, BTreeKeyType x)
     r.r->n++;
 
     if (RebalanceBTNode(r.r, f) == 1)
-    {
         T = r.r;
-    }
-#ifdef TEST
-    printf("r.r=============\n");
-    PrintBTNode(r.r);
-    PrintBTNode(r.r->ptr[r.r->n]);
-    printf("r.r father======\n");
-    PrintBTNode(r.r->ptr[r.r->n + 1]);
-    printf("================\n");
-#endif
     return 1;
 }
 
 void BTInsertArray(BTree &tree, int *x, int length)
 {
     for (int i = 0; i < length; i++)
-    {
-        printf("\x1b[H\x1b[2J");
-        printf("****************\n");
         BTInsert(tree, x[i]);
-    }
 }
 
 /*---------------------------------------------------------------------------------*/

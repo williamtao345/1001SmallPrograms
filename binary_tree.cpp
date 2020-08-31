@@ -464,8 +464,12 @@ int InitBTNode(BTree &T)
 {
     if (T == NULL)
         T = (BTree)calloc(1, sizeof(BTNode));
-    free(T->key);
-    free(T->ptr);
+    else
+    {
+        free(T->key);
+        free(T->ptr);
+    }
+
     T->n = 0;
     T->key = (BTreeKeyType *)calloc(BTree_m + 1, sizeof(BTreeKeyType));
     T->ptr = (BTree_ **)calloc(BTree_m + 2, sizeof(BTree_));

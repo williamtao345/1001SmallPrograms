@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define TEST
+// #define TEST
 int BTree_m = 5;
 typedef unsigned int BTreeKeyType;
 typedef struct BTree_
 {
     int n;
     struct node *parent;
-    BTreeKeyType *key;   //key[BTree_m - 1]
-    struct BTree_ **ptr; //*ptr[BTree_m+1]
-    /*int **recptr;*/    //recptr[BTree_m + 1]
+    BTreeKeyType *key;   //key[BTree_m + 1]
+    struct BTree_ **ptr; //*ptr[BTree_m + 2]
+    /*int **recptr;*/    //recptr[BTree_m + 2]
 } BTNode, *BTree;
 
 int InitBTNode(BTree &T)
@@ -46,6 +46,9 @@ BTreeSearch_r BTSearch_a(BTree T, BTreeKeyType x)
     BTNode *p = T, *q = NULL;
     while (p != NULL)
     {
+        for (i = 0; x > p->key[i] && i < p->n; i++)
+            ;
+
         if (p->key[i] == x)
         {
             rst.r = p;
@@ -78,9 +81,10 @@ int RebalanceBTNode(BTNode *&T, BTNode *f)
         T = f;
         ifRoot = 1;
     }
+
     //Seperate node;
-    BTreeKeyType middle = left->key[BTree_m / 2 + 1];
-    left->key[BTree_m / 2 + 1] = NULL;
+    BTreeKeyType middle = left->key[(BTree_m + 1) / 2];
+    left->key[(BTree_m + 1) / 2] = NULL;
     left->n--;
 
     BTNode *right = NULL;
@@ -88,15 +92,15 @@ int RebalanceBTNode(BTNode *&T, BTNode *f)
     int q;
     for (q = 0; q < BTree_m / 2; q++)
     {
-        right->key[q] = left->key[q + BTree_m / 2 + 2];
-        left->key[q + BTree_m / 2 + 2] = NULL;
-        right->ptr[q] = left->ptr[q + BTree_m / 2 + 2];
-        left->ptr[q + BTree_m / 2 + 2] = NULL;
+        right->key[q] = left->key[q + (BTree_m + 1) / 2 + 1];
+        left->key[q + (BTree_m + 1) / 2 + 1] = NULL;
+        right->ptr[q] = left->ptr[q + (BTree_m + 1) / 2 + 1];
+        left->ptr[q + (BTree_m + 1) / 2 + 1] = NULL;
         left->n--;
         right->n++;
     }
-    right->ptr[q] = left->ptr[q + BTree_m / 2 + 2];
-    left->ptr[q + BTree_m / 2 + 2] = NULL;
+    right->ptr[q] = left->ptr[q + (BTree_m + 1) / 2 + 2];
+    left->ptr[q + (BTree_m + 1) / 2 + 2] = NULL;
 
     left->ptr[left->n + 1] = f;
     right->ptr[right->n + 1] = f;
@@ -149,11 +153,11 @@ void BTInsertArray(BTree &tree, int *x, int length)
     for (int i = 0; i < length; i++)
         BTInsert(tree, x[i]);
 }
-
 /*---------------------------------------------------------------------------------*/
 
 int main()
 {
+    // BTree_m = 4;
     BTree tree = NULL;
     int x[20] = {1, 2, 4, 3, 5, 6, 10, 9, 8, 7, 15, 14, 13, 12, 11, 20, 19, 18, 17, 16};
     BTInsertArray(tree, x, 20);

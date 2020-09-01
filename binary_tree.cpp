@@ -448,7 +448,7 @@ AVLTree AVLBuildTree(int *numbers, int length)
 }
 
 /*---------------------------------------------------------------------------------*/
-// #define TEST
+#define TEST
 int BTree_m = 5;
 typedef unsigned int BTreeKeyType;
 typedef struct BTree_
@@ -534,8 +534,8 @@ BTreeSearch_r BTSearch_a(BTree T, BTreeKeyType x)
     while (p != NULL)
     {
         for (i = 0; x > p->key[i] && i < p->n; i++)
-            printf("%d ", p->key[i]);
-        printf("\n");
+            ;
+
         if (p->key[i] == x)
         {
             rst.r = p;
@@ -572,9 +572,13 @@ int RebalanceBTNode(BTNode *&T, BTNode *f)
         T = f;
         ifRoot = 1;
     }
+#ifdef TEST
+    printf("--------Before change leftNode-------\n");
+    PrintBTNode(left);
+#endif
     //Seperate node;
-    BTreeKeyType middle = left->key[BTree_m / 2 + 1];
-    left->key[BTree_m / 2 + 1] = NULL;
+    BTreeKeyType middle = left->key[(BTree_m + 1) / 2];
+    left->key[(BTree_m + 1) / 2] = NULL;
     left->n--;
 
 #ifdef TEST
@@ -586,14 +590,15 @@ int RebalanceBTNode(BTNode *&T, BTNode *f)
     int q;
     for (q = 0; q < BTree_m / 2; q++)
     {
-        right->key[q] = left->key[q + BTree_m / 2 + 2];
-        left->key[q + BTree_m / 2 + 2] = NULL;
-        right->ptr[q] = left->ptr[q + BTree_m / 2 + 2];
-        left->ptr[q + BTree_m / 2 + 2] = NULL;
+        right->key[q] = left->key[q + (BTree_m + 1) / 2 + 1];
+        left->key[q + (BTree_m + 1) / 2 + 1] = NULL;
+        right->ptr[q] = left->ptr[q + (BTree_m + 1) / 2 + 1];
+        left->ptr[q + (BTree_m + 1) / 2 + 1] = NULL;
         left->n--;
         right->n++;
 
 #ifdef TEST_
+        printf("^^^^^^^^^^^^^^^^^\n");
         printf("L->key: ");
         PrintKeyArray(left->key, BTree_m + 1);
         printf("L->ptr: ");
@@ -604,8 +609,8 @@ int RebalanceBTNode(BTNode *&T, BTNode *f)
         PrintPtrArray(right->ptr, BTree_m + 2);
 #endif
     }
-    right->ptr[q] = left->ptr[q + BTree_m / 2 + 2];
-    left->ptr[q + BTree_m / 2 + 2] = NULL;
+    right->ptr[q] = left->ptr[q + (BTree_m + 1) / 2 + 2];
+    left->ptr[q + (BTree_m + 1) / 2 + 2] = NULL;
 
     left->ptr[left->n + 1] = f;
     right->ptr[right->n + 1] = f;
@@ -700,8 +705,10 @@ void BTInsertArray(BTree &tree, int *x, int length)
 {
     for (int i = 0; i < length; i++)
     {
+#ifdef TEST
         printf("\x1b[H\x1b[2J");
         printf("****************\n");
+#endif
         BTInsert(tree, x[i]);
     }
 }
@@ -710,6 +717,7 @@ void BTInsertArray(BTree &tree, int *x, int length)
 
 int main()
 {
+    // BTree_m = 4;
     BTree tree = NULL;
     int x[20] = {1, 2, 4, 3, 5, 6, 10, 9, 8, 7, 15, 14, 13, 12, 11, 20, 19, 18, 17, 16};
     BTInsertArray(tree, x, 20);

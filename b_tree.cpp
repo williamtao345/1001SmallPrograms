@@ -152,7 +152,7 @@ void BTInsertArray(BTree &tree, int *x, int length)
 {
     for (int i = 0; i < length; i++)
         BTInsert(tree, x[i]);
-}
+}  
 /*---------------------------------------------------------------------------------*/
 
 int main()

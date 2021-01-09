@@ -6,13 +6,16 @@
 typedef unsigned long long PFType;
 
 #define DEBUG
+#define LEAST_PRINT_SECOND 0.1    //Set to 0 in order to print every number
 
 char is_prime_number(PFType number)
 {
-    for (PFType i = 2; i <= number / 2; i++)
+    int flag = 2;
+    for (PFType i = 2; i <= number / flag; i++)
     {
         if (number % i == 0)
             return 0;
+        flag = i;
     }
     return 1;
 }
@@ -108,8 +111,6 @@ void PrintPFS(PFSNode PFS)
     printf("\n");
 }
 
-#define LEAST_SECOND 0.1
-
 PFSNode PrimeFactorization(PFType number)
 {
     clock_t start = clock();
@@ -118,8 +119,9 @@ PFSNode PrimeFactorization(PFType number)
     while (number != 1)
         number = PFS_InputMinPrimeFactor(number, PFS);
     double time = (double)(clock() - start) / CLOCKS_PER_SEC;
-    if (time > LEAST_SECOND)
-     {   PrintPFS(PFS);
+    if (time > LEAST_PRINT_SECOND)
+    {
+        PrintPFS(PFS);
         printf("Spent %f seconds\n", (double)(clock() - start) / CLOCKS_PER_SEC);
         printf("--------------------------\n");
      }
@@ -128,8 +130,5 @@ PFSNode PrimeFactorization(PFType number)
 
 int main()
 {
-    for (PFType i = 200100585; i < 1000000000000; i++)
-    {
-        PrimeFactorization(i);
-    }
+    PrimeFactorization(1334771190284846820);
 }

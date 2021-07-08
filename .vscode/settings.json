@@ -31,6 +31,9 @@
         "__functional_03": "cpp",
         "functional": "cpp",
         "ios": "cpp",
-        "__node_handle": "cpp"
-    }
+        "__node_handle": "cpp",
+        "__mutex_base": "cpp",
+        "__threading_support": "cpp"
+    },
+    "editor.fontSize": 12
 }
